@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, X, Film, Search } from 'lucide-react';
-
+import React, { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Menu, X, Film, Search } from "lucide-react";
+import { Link } from "react-router-dom";
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [showSearch, setShowSearch] = useState(false);
-  const [searchValue, setSearchValue] = useState('');
+  const [searchValue, setSearchValue] = useState("");
 
   const toggleMenu = () => {
     setIsOpen(!isOpen);
@@ -17,13 +17,13 @@ const Navbar = () => {
 
   const menuVariants = {
     hidden: {
-      x: '-100%',
-      transition: { type: 'tween', duration: 0.3 }
+      x: "-100%",
+      transition: { type: "tween", duration: 0.3 },
     },
     visible: {
       x: 0,
-      transition: { type: 'tween', duration: 0.3 }
-    }
+      transition: { type: "tween", duration: 0.3 },
+    },
   };
 
   return (
@@ -34,7 +34,7 @@ const Navbar = () => {
           <button
             className="md:hidden z-50"
             onClick={toggleMenu}
-            aria-label={isOpen ? 'Close menu' : 'Open menu'}
+            aria-label={isOpen ? "Close menu" : "Open menu"}
           >
             {isOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
@@ -48,15 +48,36 @@ const Navbar = () => {
         {/* Desktop Navigation and Search */}
         <div className="flex items-center space-x-4 md:space-x-6">
           <ul className="hidden md:flex items-center space-x-6 font-sans">
-            <li><a href="/" className="hover:text-[#e50914] transition-colors">Home</a></li>
-            <li><a href="/watchlist" className="hover:text-[#e50914] transition-colors">Watchlist</a></li>
-            <li><a href="/about" className="hover:text-[#e50914] transition-colors">About</a></li>
+            <li>
+              <a href="/" className="hover:text-[#e50914] transition-colors">
+                Home
+              </a>
+            </li>
+            <li>
+              <a
+                href="/watchlist"
+                className="hover:text-[#e50914] transition-colors"
+              >
+                Watchlist
+              </a>
+            </li>
+            <li>
+              <a
+                href="/about"
+                className="hover:text-[#e50914] transition-colors"
+              >
+                About
+              </a>
+            </li>
           </ul>
 
           {/* Search Icon */}
           <div className="relative">
             <button onClick={toggleSearch} aria-label="Search">
-              <Search size={22} className="hover:text-[#e50914] transition-colors duration-200" />
+              <Search
+                size={22}
+                className="hover:text-[#e50914] transition-colors duration-200"
+              />
             </button>
 
             {/* Search input visible only on md+ screens */}
@@ -85,13 +106,19 @@ const Navbar = () => {
           >
             <ul className="flex flex-col space-y-4 p-4">
               <li className="hover:bg-[#2a2a2a] p-2 rounded">
-                <a href="/" className="block w-full">Home</a>
+                <Link href="/" className="block w-full">
+                  Home
+                </Link>
               </li>
               <li className="hover:bg-[#2a2a2a] p-2 rounded">
-                <a href="/watchlist" className="block w-full">Watchlist</a>
+                <Link href="/watchlist" className="block w-full">
+                  Watchlist
+                </Link>
               </li>
               <li className="hover:bg-[#2a2a2a] p-2 rounded">
-                <a href="/about" className="block w-full">About</a>
+                <Link href="/about" className="block w-full">
+                  About
+                </Link>
               </li>
             </ul>
           </motion.div>
