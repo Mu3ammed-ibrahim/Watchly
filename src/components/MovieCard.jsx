@@ -1,122 +1,110 @@
 import { useState } from 'react';
-import { Play, Plus, ThumbsUp, ChevronDown } from 'lucide-react';
+import { useDispatch, useSelector } from 'react-redux';
+import { Play, Plus } from 'lucide-react';
 
+// Default movie fallback
 const defaultMovie = {
-  id: 1,
-  title: "Stranger Things",
-  posterUrl: "/src/assets/stranger things.jpg",
-  rating: 4.5,
-  year: 2016,
-  maturityRating: "TV-14",
-  duration: "50m",
-  genres: ["Sci-Fi", "Horror", "Drama"],
-  description:
-    "When a young boy vanishes, a small town uncovers a mystery involving secret experiments, terrifying supernatural forces and one strange little girl.",
+  id: 0,
+  title: 'No Title',
+  poster_path: null,
+  posterUrl: null
 };
 
 export default function MovieCard({ movie }) {
   const [isHovered, setIsHovered] = useState(false);
-
+  const [imageError, setImageError] = useState(false);
+  const dispatch = useDispatch();
+  const watchlist = useSelector((state) => state.watchlist);
   const movieData = movie || defaultMovie;
+
+  // Handle different API response formats
+  // TMDB API typically returns 'poster_path', adjust based on your API
+  const getPosterUrl = (movie) => {
+    if (!movie) return null;
+    
+    // If your API returns posterUrl directly
+    if (movie.posterUrl) return movie.posterUrl;
+    
+    // If using TMDB API (returns poster_path)
+    if (movie.poster_path) {
+      return `https://image.tmdb.org/t/p/w500${movie.poster_path}`;
+    }
+    
+    // If using different API format, adjust accordingly
+    if (movie.image) return movie.image;
+    if (movie.poster) return movie.poster;
+    
+    return null;
+  };
+
+  const posterUrl = getPosterUrl(movieData);
+  const movieTitle = movieData.title || movieData.name || 'No Title';
+
+  // Debug: Console log to see the movie data structure
+  console.log('Movie data:', movieData);
 
   return (
     <div
-      className="relative rounded-md overflow-hidden hover:z-10 w-40 sm:w-48 md:w-52 transition-transform duration-300 hover:scale-105 focus:scale-105"
+      className="relative rounded-md overflow-hidden hover:z-10 w-40 sm:w-48 md:w-52 transition-all duration-300 hover:scale-105 focus:scale-105"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      tabIndex={0} // makes card focusable for keyboard users
+      tabIndex={0}
       onFocus={() => setIsHovered(true)}
       onBlur={() => setIsHovered(false)}
     >
-      {/* Base Card */}
+      {/* Poster */}
       <div className="bg-gray-900 text-white rounded-md overflow-hidden shadow-lg">
-        {/* Movie Poster */}
         <div className="relative aspect-[2/3]">
-          <img
-            src={movieData.posterUrl}
-            alt={`${movieData.title} poster`}
-            className="w-full h-full object-fill absolute inset-0"
-            loading="lazy"
-          />
-        </div>
-
-        {/* Expanded Info (shows on hover/focus) */}
-        {isHovered && (
-          <div
-            className="absolute inset-0 bg-gray-900 bg-opacity-90 flex flex-col gap-4 p-3 opacity-100 transition-opacity duration-200"
-          >
-            <div className="flex flex-col h-full">
-              {/* Title */}
-              <h3 className="text-sm font-bold mb-1">{movieData.title}</h3>
-
-              {/* Controls */}
-              <div className="flex flex-wrap gap-1 mb-1">
-                <button
-                  aria-label="Play"
-                  className="bg-white text-black p-1 rounded-full flex items-center justify-center hover:scale-105 active:scale-95 transition-transform"
-                >
-                  <Play size={14} />
-                </button>
-                <button
-                  aria-label="Add to List"
-                  className="border border-gray-400 p-1 rounded-full flex items-center justify-center hover:scale-105 active:scale-95 transition-transform"
-                >
-                  <Plus size={14} />
-                </button>
-                <button
-                  aria-label="Thumbs Up"
-                  className="border border-gray-400 p-1 rounded-full flex items-center justify-center hover:scale-105 active:scale-95 transition-transform"
-                >
-                  <ThumbsUp size={14} />
-                </button>
-                <button
-                  aria-label="More Info"
-                  className="border border-gray-400 p-1 rounded-full flex items-center justify-center ml-auto hover:scale-105 active:scale-95 transition-transform"
-                >
-                  <ChevronDown size={14} />
-                </button>
-              </div>
-
-              {/* Info */}
-              <div className="mt-2 overflow-y-auto flex-grow">
-                <div className="flex items-center gap-2 mb-1">
-                  <span className="text-green-500 font-bold">
-                    {(movieData.rating * 20).toFixed(0)}% Match
-                  </span>
-                  <span className="border px-1 text-xs">{movieData.maturityRating}</span>
-                  <span>{movieData.duration}</span>
-                  <span className="border border-white rounded px-1 text-xs">HD</span>
-                </div>
-
-                <div className="flex flex-wrap gap-1 text-xs mb-1">
-                  {movieData.genres.map((genre, index) => (
-                    <span key={index}>
-                      {genre}
-                      {index < movieData.genres.length - 1 ? " • " : ""}
-                    </span>
-                  ))}
-                </div>
-
-                {/* Description with scrolling */}
-                {movieData.description && (
-                  <p className="text-xs text-gray-300 overflow-y-auto max-h-16">
-                    {movieData.description}
-                  </p>
-                )}
+          {posterUrl && !imageError ? (
+            <img
+              src={posterUrl}
+              alt={`${movieTitle} poster`}
+              className="w-full h-full object-cover absolute inset-0"
+              loading="lazy"
+              onError={() => setImageError(true)}
+            />
+          ) : (
+            // Fallback when no image or image fails to load
+            <div className="w-full h-full absolute inset-0 bg-gray-700 flex items-center justify-center">
+              <div className="text-center p-4">
+                <div className="text-4xl mb-2">🎬</div>
+                <p className="text-xs text-gray-300">{movieTitle}</p>
               </div>
             </div>
+          )}
+          
+          {/* Hover Overlay */}
+          <div
+            className={`absolute inset-0 bg-black bg-opacity-70 flex flex-col justify-end p-3
+              transition-opacity duration-300 ease-in-out ${isHovered ? 'opacity-100' : 'opacity-0'}`}
+          >
+            <h3 className="text-white font-bold mb-3 text-sm">{movieTitle}</h3>
+            <div className="flex gap-2">
+              <button
+                aria-label="Play"
+                className="bg-white text-black p-2 rounded-full flex items-center justify-center 
+                hover:bg-opacity-80 transition-all duration-200"
+              >
+                <Play size={16} />
+              </button>
+              <button
+                aria-label="Add to List"
+                className="border border-white p-2 rounded-full flex items-center justify-center
+                hover:bg-white hover:bg-opacity-20 transition-all duration-200"
+              >
+                <Plus size={16} />
+              </button>
+            </div>
           </div>
-        )}
+        </div>
       </div>
 
-      {/* Title (shows when not hovered) */}
-      {!isHovered && (
-        <div
-          className="p-2 opacity-100 transition-opacity duration-300"
-        >
-          <h3 className="font-medium text-white text-xs">{movieData.title}</h3>
-        </div>
-      )}
+      {/* Title when not hovering */}
+      <div
+        className={`p-2 transition-opacity duration-300 ${isHovered ? 'opacity-0' : 'opacity-100'}`}
+      >
+        <h3 className="font-medium text-white text-xs">{movieTitle}</h3>
+      </div>
     </div>
   );
 }
