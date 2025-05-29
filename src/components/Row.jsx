@@ -3,49 +3,43 @@ import { motion } from 'framer-motion';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import MovieCard from './MovieCard';
 
-export default function   Row({ title, movies, rowId }) {
+export default function Row({ title, movies, rowId }) { // ✅ Accept movies prop
   const rowRef = useRef(null);
   const [isHovered, setIsHovered] = useState(false);
   const [hasPrevious, setHasPrevious] = useState(false);
   const [hasMore, setHasMore] = useState(true);
-  
-  // Handle scrolling
+
+  // ✅ Use the movies prop instead of Redux selector
+  // const movies = useSelector((state) => state.movies.movies); // Remove this line
+
   const handleScroll = (direction) => {
     const container = rowRef.current;
     if (!container) return;
-    
-    const scrollAmount = 1000; // Scroll distance per click
+
+    const scrollAmount = 1000;
     const currentScroll = container.scrollLeft;
-    
+
     if (direction === 'left') {
-      container.scrollTo({
-        left: currentScroll - scrollAmount,
-        behavior: 'smooth'
-      });
+      container.scrollTo({ left: currentScroll - scrollAmount, behavior: 'smooth' });
     } else {
-      container.scrollTo({
-        left: currentScroll + scrollAmount,
-        behavior: 'smooth'
-      });
+      container.scrollTo({ left: currentScroll + scrollAmount, behavior: 'smooth' });
     }
-    
-    // Update scroll state after animation completes
+
     setTimeout(() => {
       const newScrollLeft = container.scrollLeft;
       setHasPrevious(newScrollLeft > 0);
       setHasMore(newScrollLeft < (container.scrollWidth - container.clientWidth - 10));
     }, 500);
   };
-  
-  // Check scroll state on container scroll
+
   const handleContainerScroll = () => {
     const container = rowRef.current;
     if (!container) return;
-    
+
     setHasPrevious(container.scrollLeft > 0);
     setHasMore(container.scrollLeft < (container.scrollWidth - container.clientWidth - 10));
   };
-  
+
   return (
     <motion.div 
       className="mb-8"
@@ -68,9 +62,9 @@ export default function   Row({ title, movies, rowId }) {
           {title}
         </motion.h2>
       </div>
-      
+
       <div className="relative group">
-        {/* Left Navigation Arrow */}
+        {/* Left Arrow */}
         <motion.div
           className="absolute left-0 top-0 bottom-0 z-10 flex items-center"
           initial={{ opacity: 0 }}
@@ -87,8 +81,8 @@ export default function   Row({ title, movies, rowId }) {
             <ChevronLeft size={40} className="text-white" />
           </motion.button>
         </motion.div>
-        
-        {/* Right Navigation Arrow */}
+
+        {/* Right Arrow */}
         <motion.div
           className="absolute right-0 top-0 bottom-0 z-10 flex items-center"
           initial={{ opacity: 0 }}
@@ -105,8 +99,8 @@ export default function   Row({ title, movies, rowId }) {
             <ChevronRight size={40} className="text-white" />
           </motion.button>
         </motion.div>
-        
-        {/* Movies Row */}
+
+        {/* Movies */}
         <div 
           className="flex gap-2 overflow-x-hidden scrollbar-hide pl-4 py-4"
           style={{ scrollbarWidth: 'none', msOverflowStyle: 'none', WebkitOverflowScrolling: 'touch' }}
