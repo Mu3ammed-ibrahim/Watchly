@@ -1,9 +1,10 @@
-import { useRef, useState } from 'react';
-import { motion } from 'framer-motion';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
-import MovieCard from './MovieCard';
+import { useRef, useState } from "react";
+import { motion } from "framer-motion";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import MovieCard from "./MovieCard";
 
-export default function Row({ title, movies, rowId }) { // ✅ Accept movies prop
+export default function Row({ title, movies, rowId }) {
+  // ✅ Accept movies prop
   const rowRef = useRef(null);
   const [isHovered, setIsHovered] = useState(false);
   const [hasPrevious, setHasPrevious] = useState(false);
@@ -19,16 +20,24 @@ export default function Row({ title, movies, rowId }) { // ✅ Accept movies pro
     const scrollAmount = 1000;
     const currentScroll = container.scrollLeft;
 
-    if (direction === 'left') {
-      container.scrollTo({ left: currentScroll - scrollAmount, behavior: 'smooth' });
+    if (direction === "left") {
+      container.scrollTo({
+        left: currentScroll - scrollAmount,
+        behavior: "smooth",
+      });
     } else {
-      container.scrollTo({ left: currentScroll + scrollAmount, behavior: 'smooth' });
+      container.scrollTo({
+        left: currentScroll + scrollAmount,
+        behavior: "smooth",
+      });
     }
 
     setTimeout(() => {
       const newScrollLeft = container.scrollLeft;
       setHasPrevious(newScrollLeft > 0);
-      setHasMore(newScrollLeft < (container.scrollWidth - container.clientWidth - 10));
+      setHasMore(
+        newScrollLeft < container.scrollWidth - container.clientWidth - 10
+      );
     }, 500);
   };
 
@@ -37,12 +46,13 @@ export default function Row({ title, movies, rowId }) { // ✅ Accept movies pro
     if (!container) return;
 
     setHasPrevious(container.scrollLeft > 0);
-    setHasMore(container.scrollLeft < (container.scrollWidth - container.clientWidth - 10));
+    setHasMore(
+      container.scrollLeft < container.scrollWidth - container.clientWidth - 10
+    );
   };
 
   return (
-    <motion.div 
-      className="mb-8"
+    <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
@@ -50,12 +60,12 @@ export default function Row({ title, movies, rowId }) { // ✅ Accept movies pro
       onMouseLeave={() => setIsHovered(false)}
     >
       <div className="flex items-center justify-between mb-2 px-4">
-        <motion.h2 
+        <motion.h2
           className="text-xl font-bold text-white"
-          animate={{ 
+          animate={{
             scale: isHovered ? 1.05 : 1,
             x: isHovered ? 10 : 0,
-            color: isHovered ? '#E50914' : '#FFFFFF'
+            color: isHovered ? "#E50914" : "#FFFFFF",
           }}
           transition={{ duration: 0.3 }}
         >
@@ -73,8 +83,8 @@ export default function Row({ title, movies, rowId }) { // ✅ Accept movies pro
         >
           <motion.button
             className="bg-black bg-opacity-50 h-full px-2 flex items-center justify-center"
-            onClick={() => handleScroll('left')}
-            whileHover={{ backgroundColor: 'rgba(229, 9, 20, 0.5)' }}
+            onClick={() => handleScroll("left")}
+            whileHover={{ backgroundColor: "rgba(229, 9, 20, 0.5)" }}
             whileTap={{ scale: 0.95 }}
             disabled={!hasPrevious}
           >
@@ -91,8 +101,8 @@ export default function Row({ title, movies, rowId }) { // ✅ Accept movies pro
         >
           <motion.button
             className="bg-black bg-opacity-50 h-full px-2 flex items-center justify-center"
-            onClick={() => handleScroll('right')}
-            whileHover={{ backgroundColor: 'rgba(229, 9, 20, 0.5)' }}
+            onClick={() => handleScroll("right")}
+            whileHover={{ backgroundColor: "rgba(229, 9, 20, 0.5)" }}
             whileTap={{ scale: 0.95 }}
             disabled={!hasMore}
           >
@@ -101,16 +111,20 @@ export default function Row({ title, movies, rowId }) { // ✅ Accept movies pro
         </motion.div>
 
         {/* Movies */}
-        <div 
+        <div
           className="flex gap-2 overflow-x-hidden scrollbar-hide pl-4 py-4"
-          style={{ scrollbarWidth: 'none', msOverflowStyle: 'none', WebkitOverflowScrolling: 'touch' }}
+          style={{
+            scrollbarWidth: "none",
+            msOverflowStyle: "none",
+            WebkitOverflowScrolling: "touch",
+          }}
           ref={rowRef}
           onScroll={handleContainerScroll}
           id={`row-${rowId}`}
         >
           {movies && movies.length > 0 ? (
             movies.map((movie, index) => (
-              <motion.div 
+              <motion.div
                 key={movie.id || index}
                 className="flex-shrink-0"
                 initial={{ opacity: 0, scale: 0.9 }}
