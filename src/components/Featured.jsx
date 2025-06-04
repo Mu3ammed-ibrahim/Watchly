@@ -4,6 +4,8 @@ import Row from "./Row";
 export default function Featured() {
   const trendingMovies = useSelector((state) => state.movies.trending);
   const popularMovies = useSelector((state) => state.movies.popular);
+  const topRatedMovies = useSelector((state) => state.movies.topRated); 
+  const TvSeries = useSelector((state) => state.movies.tvSeries);
   const loading = useSelector((state) => state.movies.loading);
   const error = useSelector((state) => state.movies.error);
 
@@ -29,7 +31,9 @@ export default function Featured() {
     <div className="bg-black min-h-screen text-white">
       <div>
         <Row title="Trending Now" movies={trendingMovies} rowId="trending" />
+        <Row title="Top Rated Movies" movies={topRatedMovies} rowId="topRated" />
         <Row title="Popular Movies" movies={popularMovies} rowId="popular" />
+        <Row title="Tv Series" movies={TvSeries} rowId="tvSeries" />
       </div>
     </div>
   );
