@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
-import { fetchPopularMovies, fetchTrendingMovies, fetchTvSeries, fetchTopRatedMovies } from '../redux/features/movies/moviesSlice'; 
+import { fetchPopularMovies, fetchTrendingMovies, fetchTvSeries, fetchTopRatedMovies } from '../app/features/movies/moviesSlice'; 
 import Hero from "../components/HeroSection.jsx";
 import Featured from "../components/Featured.jsx";
 

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchSearchMovies, clearSearchResults } from "../redux/features/movies/moviesSlice";
+import { fetchSearchMovies, clearSearchResults } from "../app/features/movies/moviesSlice";
 import { Menu, X, Film, Search, Loader2 } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom"; // Add useNavigate
 
