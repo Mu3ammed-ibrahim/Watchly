@@ -32,7 +32,7 @@ export default function MovieCard({ movie }) {
   const movieDescription = movieData.overview || "No Description";
 
   return (
-    <Link to={`/movie/${movieData.id}`} className="block">
+    <Link to={`/${movieData.media_type}/${movieData.id}`} className="block">
       <div
         className="relative rounded-md overflow-hidden hover:z-10 w-40 sm:w-48 md:w-52 transition-all duration-300 hover:scale-105 focus:scale-105"
         onMouseEnter={() => setIsHovered(true)}
@@ -94,7 +94,6 @@ export default function MovieCard({ movie }) {
               <div className="flex items-center text-gray-400 text-xs">
                 <Star size={10} className="text-yellow-400 mr-1" />
                 <span className="ml-1">
-                  {" "}
                   {Rating > 0 ? parseFloat(Rating).toFixed(1) : "N/A"}
                 </span>
               </div>

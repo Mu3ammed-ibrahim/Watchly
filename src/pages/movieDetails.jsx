@@ -11,29 +11,28 @@ import {
   Clock,
   Calendar,
 } from "lucide-react";
-import MovieTrailer from "../components/movieThriller"; // Fixed import name
+import MovieTrailer from "../components/movieThriller";
 import MoviePoster from "../components/moviePoster";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchMovieDetail } from "../App/features/movies/movieDetailSlice";
+import { fetchMediaDetail } from "../App/features/movies/movieDetailSlice";
 
 const MovieDetails = () => {
-  const { id } = useParams();
+  const { id, media_type } = useParams();
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  // Get movie data from Redux store
-  const { movie, loading, error } = useSelector((state) => state.movieDetail);
+  // FIXED: Changed 'movie' to 'media' and 'movieDetail' to 'mediaDetail'
+  const { media, loading, error } = useSelector((state) => state.mediaDetail);
 
   const [isInWatchlist, setIsInWatchlist] = useState(false);
   const [isLiked, setIsLiked] = useState(false);
 
-  // Fetch movie details when component mounts or movieId changes
+  // Fetch media details when component mounts or id/media_type changes
   useEffect(() => {
-    console.log("Movie ID from URL:", id, "Type:", typeof id);
-    console.log("Movie data:", movie); // Debug log
-
-    dispatch(fetchMovieDetail(id));
-  }, [dispatch, id]); // Added id to dependency array
+    if (id && media_type) {
+      dispatch(fetchMediaDetail({ id, media_type }));
+    }
+  }, [dispatch, id, media_type]); // Added dispatch to dependencies
 
   // Handle back navigation with smooth transition
   const handleBack = () => {
@@ -43,28 +42,22 @@ const MovieDetails = () => {
   // Toggle watchlist status with visual feedback
   const toggleWatchlist = () => {
     setIsInWatchlist(!isInWatchlist);
-    // Here you would typically make an API call to update the watchlist
   };
 
   // Toggle like status with visual feedback
   const toggleLike = () => {
     setIsLiked(!isLiked);
-    // Here you would typically make an API call to update the like status
   };
 
-  // Handle movie sharing functionality
+  // Handle media sharing functionality
   const handleShare = () => {
-    if (navigator.share && movie) {
+    if (navigator.share && media) {
       navigator.share({
-        title: movie.title,
-        text: `Check out ${movie.title} - ${movie.description.substring(
-          0,
-          100
-        )}...`,
+        title: media.title,
+        text: `Check out ${media.title} - ${media.description.substring(0, 100)}...`,
         url: window.location.href,
       });
     } else {
-      // Fallback for browsers that don't support Web Share API
       navigator.clipboard.writeText(window.location.href);
       alert("Link copied to clipboard!");
     }
@@ -98,7 +91,7 @@ const MovieDetails = () => {
     return (
       <div className="min-h-screen bg-black text-white flex items-center justify-center">
         <div className="text-center">
-          <h2 className="text-2xl font-bold mb-4">Error loading movie</h2>
+          <h2 className="text-2xl font-bold mb-4">Error loading media</h2>
           <p className="text-gray-400 mb-4">{error}</p>
           <button
             onClick={handleBack}
@@ -111,12 +104,12 @@ const MovieDetails = () => {
     );
   }
 
-  // Movie not found state
-  if (!movie) {
+  // Media not found state
+  if (!media) {
     return (
       <div className="min-h-screen bg-black text-white flex items-center justify-center">
         <div className="text-center">
-          <h2 className="text-2xl font-bold mb-4">Movie not found</h2>
+          <h2 className="text-2xl font-bold mb-4">Media not found</h2>
           <button
             onClick={handleBack}
             className="bg-red-600 hover:bg-red-700 px-6 py-2 rounded-lg transition-colors"
@@ -139,8 +132,8 @@ const MovieDetails = () => {
       {/* Hero Section with Backdrop */}
       <div className="relative h-64 md:h-96 overflow-hidden">
         <img
-          src={movie.backdrop}
-          alt={movie.title}
+          src={media.backdrop}
+          alt={media.title}
           className="w-full h-full object-cover"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent" />
@@ -167,13 +160,13 @@ const MovieDetails = () => {
             transition={{ delay: 0.3 }}
           >
             <MoviePoster
-              poster={movie.poster}
-              title={movie.title}
-              year={movie.year}
+              poster={media.poster}
+              title={media.title}
+              year={media.year}
             />
           </motion.div>
 
-          {/* Movie Information */}
+          {/* Media Information */}
           <motion.div
             initial={{ y: 50, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
@@ -183,30 +176,30 @@ const MovieDetails = () => {
             {/* Title and Basic Info */}
             <div>
               <h1 className="text-3xl md:text-5xl font-bold mb-2">
-                {movie.title}
+                {media.title}
               </h1>
               <div className="flex flex-wrap items-center gap-4 text-gray-300">
                 <span className="flex items-center gap-1">
                   <Calendar className="w-4 h-4" />
-                  {movie.year}
+                  {media.year}
                 </span>
                 <span className="flex items-center gap-1">
                   <Clock className="w-4 h-4" />
-                  {movie.duration}
+                  {media.duration}
                 </span>
                 <span className="bg-gray-700 px-2 py-1 rounded text-sm">
-                  {movie.rating}
+                  {media.rating}
                 </span>
                 <span className="flex items-center gap-1">
                   <Star className="w-4 h-4 text-yellow-500" />
-                  {movie.imdbRating}
+                  {media.imdbRating}
                 </span>
               </div>
             </div>
 
             {/* Genre Tags */}
             <div className="flex flex-wrap gap-2">
-              {movie.genre?.map((g, index) => (
+              {media.genre?.map((g, index) => (
                 <span
                   key={index}
                   className="bg-red-600/20 text-red-400 px-3 py-1 rounded-full text-sm border border-red-600/30"
@@ -218,18 +211,18 @@ const MovieDetails = () => {
 
             {/* Description */}
             <p className="text-gray-300 text-lg leading-relaxed max-w-4xl">
-              {movie.description}
+              {media.description}
             </p>
 
             {/* Cast and Crew */}
             <div className="space-y-2">
               <div>
                 <span className="text-gray-400">Director: </span>
-                <span className="text-white">{movie.director}</span>
+                <span className="text-white">{media.director}</span>
               </div>
               <div>
                 <span className="text-gray-400">Cast: </span>
-                <span className="text-white">{movie.cast?.join(", ")}</span>
+                <span className="text-white">{media.cast?.join(", ")}</span>
               </div>
             </div>
 
@@ -293,17 +286,17 @@ const MovieDetails = () => {
           </motion.div>
         </div>
 
-        {/* Movie Trailer Component - FIXED */}
+        {/* Media Trailer Component */}
         <motion.div
           initial={{ y: 50, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ delay: 0.6 }}
           className="mt-12"
         >
-          <MovieTrailer 
-            trailerUrl={movie.trailer} // Fixed: Changed from movie.thriller to movie.trailer
-            title={movie.title}
-            thumbnail={movie.backdrop || movie.poster} // Added thumbnail prop
+          <MovieTrailer
+            trailerUrl={media.trailer}
+            title={media.title}
+            thumbnail={media.backdrop || media.poster}
           />
         </motion.div>
       </div>
