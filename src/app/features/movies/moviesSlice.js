@@ -12,13 +12,17 @@ export const fetchPopularMovies = createAsyncThunk(
       const res = await axios.get(
         `https://api.themoviedb.org/3/movie/popular?api_key=${TMDB_API_KEY}&language=en-US&page=1`
       );
-      return res.data.results;
+      return res.data.results.map(movie => ({
+        ...movie,
+        media_type: "movie",
+      }));
     } catch (err) {
       return thunkAPI.rejectWithValue(err.response.data);
     }
   }
 );
-// thunk to fetch top rated movies
+
+// Thunk to fetch top rated movies
 export const fetchTopRatedMovies = createAsyncThunk(
   "movies/fetchTopRatedMovies",
   async (_, thunkAPI) => {
@@ -26,26 +30,34 @@ export const fetchTopRatedMovies = createAsyncThunk(
       const res = await axios.get(
         `https://api.themoviedb.org/3/movie/top_rated?api_key=${TMDB_API_KEY}&language=en-US&page=1`
       );
-      return res.data.results;
+      return res.data.results.map(movie => ({
+        ...movie,
+        media_type: "movie",
+      }));
     } catch (err) {
       return thunkAPI.rejectWithValue(err.response.data);
     }
   }
 );
-//thunk to fetch tv series
+
+// Thunk to fetch tv series
 export const fetchTvSeries = createAsyncThunk(
   "movies/fetchTvSeries",
   async (_, thunkAPI) => {
     try {
       const res = await axios.get(
-        `https://api.themoviedb.org/3/tv/popular?api_key=${TMDB_API_KEY}&language=en-US&page=1`
+        `https://api.themoviedb.org/3/discover/tv?sort_by=vote_average.desc&vote_count.gte=100&without_genres=10763,10764,10767&api_key=${TMDB_API_KEY}&language=en-US&page=1`
       );
-      return res.data.results;
+      return res.data.results.map(tv => ({
+        ...tv,
+        media_type: "tv",
+      }));
     } catch (err) {
       return thunkAPI.rejectWithValue(err.response.data);
     }
   }
 );
+
 // Thunk to fetch search movies
 export const fetchSearchMovies = createAsyncThunk(
   "movies/fetchSearchMovies",
@@ -54,7 +66,10 @@ export const fetchSearchMovies = createAsyncThunk(
       const res = await axios.get(
         `https://api.themoviedb.org/3/search/movie?api_key=${TMDB_API_KEY}&language=en-US&query=${searchTerm}&page=1&include_adult=false`
       );
-      return res.data.results;
+      return res.data.results.map(movie => ({
+        ...movie,
+        media_type: "movie",
+      }));
     } catch (err) {
       return thunkAPI.rejectWithValue(err.response.data);
     }
@@ -69,7 +84,10 @@ export const fetchTrendingMovies = createAsyncThunk(
       const res = await axios.get(
         `https://api.themoviedb.org/3/trending/movie/day?api_key=${TMDB_API_KEY}`
       );
-      return res.data.results;
+      return res.data.results.map(movie => ({
+        ...movie,
+        media_type: "movie",
+      }));
     } catch (err) {
       return thunkAPI.rejectWithValue(err.response.data);
     }
@@ -90,11 +108,11 @@ const movieSlice = createSlice({
   },
 
   reducers: {
-    // Clear search results when input is cleared
     clearSearchResults: (state) => {
       state.searchResults = [];
     },
   },
+
   extraReducers: (builder) => {
     builder
       // Popular Movies
@@ -110,7 +128,8 @@ const movieSlice = createSlice({
         state.loading = false;
         state.error = action.payload || "Something went wrong";
       })
-      //tv series
+
+      // TV Series
       .addCase(fetchTvSeries.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -119,11 +138,11 @@ const movieSlice = createSlice({
         state.loading = false;
         state.tvSeries = action.payload;
       })
-
       .addCase(fetchTvSeries.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload || "Something went wrong";
       })
+
       // Top Rated Movies
       .addCase(fetchTopRatedMovies.pending, (state) => {
         state.loading = true;
@@ -137,6 +156,7 @@ const movieSlice = createSlice({
         state.loading = false;
         state.error = action.payload || "Something went wrong";
       })
+
       // Trending Movies
       .addCase(fetchTrendingMovies.pending, (state) => {
         state.loading = true;
@@ -150,7 +170,8 @@ const movieSlice = createSlice({
         state.loading = false;
         state.error = action.payload || "Something went wrong";
       })
-      // ✅ Search Movies - THESE WERE MISSING
+
+      // Search Movies
       .addCase(fetchSearchMovies.pending, (state) => {
         state.searchLoading = true;
         state.error = null;
