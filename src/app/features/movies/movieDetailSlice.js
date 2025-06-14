@@ -7,150 +7,69 @@ export const fetchMediaDetail = createAsyncThunk(
   "media/fetchMediaDetail",
   async ({ id, media_type }, thunkAPI) => {
     try {
-      console.log("🔍 Starting fetch for:", { id, media_type, apiKey: TMDB_API_KEY ? "✅ Present" : "❌ Missing" });
-      
       // Build URLs
-      const mediaUrl = `https://api.themoviedb.org/3/${media_type}/${id}?api_key=${TMDB_API_KEY}&language=en-US`;
+      const baseUrl = `https://api.themoviedb.org/3/${media_type}/${id}?api_key=${TMDB_API_KEY}&language=en-US`;
       const creditsUrl = `https://api.themoviedb.org/3/${media_type}/${id}/credits?api_key=${TMDB_API_KEY}`;
       const videosUrl = `https://api.themoviedb.org/3/${media_type}/${id}/videos?api_key=${TMDB_API_KEY}&language=en-US`;
-      
-      console.log("📡 API URLs:", {
-        media: mediaUrl,
-        credits: creditsUrl,
-        videos: videosUrl
-      });
 
-      // Make requests individually to see which one fails
-      let mediaRes, creditsRes, videosRes;
+      // Fetch all 3 in parallel
+      const [mediaRes, creditsRes, videosRes] = await Promise.all([
+        axios.get(baseUrl),
+        axios.get(creditsUrl),
+        axios.get(videosUrl),
+      ]);
 
-      try {
-        console.log("📡 Fetching media data...");
-        mediaRes = await axios.get(mediaUrl);
-        console.log("✅ Media data successful:", mediaRes.data);
-      } catch (error) {
-        console.error("❌ Media data failed:", error.response?.data || error.message);
-        throw error;
-      }
+      const media = mediaRes.data;
+      const credits = creditsRes.data;
+      const videos = videosRes.data;
 
-      try {
-        console.log("📡 Fetching credits data...");
-        creditsRes = await axios.get(creditsUrl);
-        console.log("✅ Credits data successful:", creditsRes.data);
-      } catch (error) {
-        console.error("❌ Credits data failed:", error.response?.data || error.message);
-        throw error;
-      }
-
-      try {
-        console.log("📡 Fetching videos data...");
-        videosRes = await axios.get(videosUrl);
-        console.log("✅ Videos data successful:", videosRes.data);
-      } catch (error) {
-        console.error("❌ Videos data failed:", error.response?.data || error.message);
-        throw error;
-      }
-
-      const mediaData = mediaRes.data;
-      const creditsData = creditsRes.data;
-      const videosData = videosRes.data;
-
-      console.log("📊 Raw API responses:", {
-        mediaData: mediaData,
-        creditsCount: creditsData.cast?.length || 0,
-        videosCount: videosData.results?.length || 0
-      });
-
-      // Enhanced director/creator logic for TV shows
+      // Director or Creator
       let director = "N/A";
       if (media_type === "movie") {
-        const movieDirector = creditsData.crew?.find((p) => p.job === "Director");
-        director = movieDirector ? movieDirector.name : "N/A";
+        const dir = credits.crew.find((p) => p.job === "Director");
+        director = dir?.name || "N/A";
       } else if (media_type === "tv") {
-        // For TV shows, look for creators first, then executive producers
-        if (mediaData.created_by && mediaData.created_by.length > 0) {
-          director = mediaData.created_by[0].name;
-        } else {
-          const execProducer = creditsData.crew?.find((p) => p.job === "Executive Producer");
-          director = execProducer ? execProducer.name : "N/A";
-        }
+        director = media.created_by?.[0]?.name || "N/A";
       }
 
-      const mainCast = creditsData.cast ? creditsData.cast.slice(0, 5).map((actor) => actor.name) : [];
+      // Trailer
+      const trailerObj = videos.results.find(
+        (v) => v.type === "Trailer" && v.site === "YouTube"
+      );
+      const trailer = trailerObj ? `https://www.youtube.com/embed/${trailerObj.key}` : null;
 
-      const trailer = videosData.results ? videosData.results.find(
-        (video) => video.type === "Trailer" && video.site === "YouTube"
-      ) : null;
+      // Cast
+      const cast = credits.cast.slice(0, 5).map((actor) => actor.name);
 
-      // Enhanced data mapping
-      const processedData = {
-        title: mediaData.title || mediaData.name || "Unknown Title",
-        description: mediaData.overview || "No description available",
-        poster: mediaData.poster_path
-          ? `https://image.tmdb.org/t/p/w500${mediaData.poster_path}`
+      // Format final data
+      return {
+        id, // <- include id for use in watchlist
+        title: media.title || media.name,
+        description: media.overview,
+        poster: media.poster_path
+          ? `https://image.tmdb.org/t/p/w500${media.poster_path}`
           : null,
-        backdrop: mediaData.backdrop_path
-          ? `https://image.tmdb.org/t/p/w1280${mediaData.backdrop_path}`
+        backdrop: media.backdrop_path
+          ? `https://image.tmdb.org/t/p/w1280${media.backdrop_path}`
           : null,
-        year: (() => {
-          const releaseDate = mediaData.release_date || mediaData.first_air_date;
-          return releaseDate ? new Date(releaseDate).getFullYear() : "N/A";
-        })(),
-        duration: (() => {
-          if (media_type === "movie") {
-            return mediaData.runtime ? `${mediaData.runtime} min` : "N/A";
-          } else {
-            // TV show duration logic
-            if (mediaData.episode_run_time && mediaData.episode_run_time.length > 0) {
-              return `${mediaData.episode_run_time[0]} min/ep`;
-            } else if (mediaData.number_of_seasons) {
-              return `${mediaData.number_of_seasons} season${mediaData.number_of_seasons > 1 ? 's' : ''}`;
-            }
-            return "N/A";
-          }
-        })(),
-        rating: mediaData.adult ? "R" : "PG-13",
-        imdbRating: mediaData.vote_average
-          ? mediaData.vote_average.toFixed(1)
+        year: (media.release_date || media.first_air_date || "").split("-")[0] || "N/A",
+        duration: media.runtime
+          ? `${media.runtime} min`
+          : media.episode_run_time?.[0]
+          ? `${media.episode_run_time[0]} min/ep`
           : "N/A",
-        genre: mediaData.genres ? mediaData.genres.map((g) => g.name) : [],
+        imdbRating: media.vote_average?.toFixed(1) || "N/A",
+        genre: media.genres?.map((g) => g.name) || [],
         director,
-        cast: mainCast,
-        trailer: trailer ? `https://www.youtube.com/embed/${trailer.key}` : null,
-        // Additional TV show specific data
-        ...(media_type === "tv" && {
-          numberOfSeasons: mediaData.number_of_seasons,
-          numberOfEpisodes: mediaData.number_of_episodes,
-          status: mediaData.status,
-          lastAirDate: mediaData.last_air_date,
-          networks: mediaData.networks?.map(n => n.name).join(", ") || "N/A"
-        })
+        cast,
+        trailer,
       };
-
-      console.log("✅ Final processed data:", processedData);
-      return processedData;
-
-    } catch (err) {
-      console.error("❌ COMPLETE ERROR DETAILS:");
-      console.error("Error object:", err);
-      console.error("Error message:", err.message);
-      console.error("Error response:", err.response);
-      console.error("Error response data:", err.response?.data);
-      console.error("Error response status:", err.response?.status);
-      console.error("Error config:", err.config);
-      
-      const errorMessage = err.response?.data?.status_message || 
-                          err.response?.data?.message ||
-                          err.message || 
-                          `Failed to fetch ${media_type} details`;
-      
-      console.error("❌ Final error message:", errorMessage);
-      
-      return thunkAPI.rejectWithValue(errorMessage);
+    } catch (error) {
+      return thunkAPI.rejectWithValue("Failed to fetch media details");
     }
   }
 );
 
-// Slice
 const mediaDetailSlice = createSlice({
   name: "mediaDetail",
   initialState: {
@@ -167,20 +86,17 @@ const mediaDetailSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(fetchMediaDetail.pending, (state) => {
-        console.log("⏳ Redux: Setting loading to true");
         state.loading = true;
         state.error = null;
       })
       .addCase(fetchMediaDetail.fulfilled, (state, action) => {
-        console.log("✅ Redux: Setting media data:", action.payload);
-        state.loading = false;
         state.media = action.payload;
+        state.loading = false;
       })
       .addCase(fetchMediaDetail.rejected, (state, action) => {
-        console.error("❌ Redux: Setting error:", action.payload);
         state.loading = false;
-        state.error = action.payload;
         state.media = null;
+        state.error = action.payload;
       });
   },
 });
