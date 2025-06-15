@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useDispatch, useSelector } from "react-redux";
+import logo from "/public/logo.png";    
 import {
   fetchSearchMovies,
   clearSearchResults,
@@ -158,7 +159,7 @@ const Navbar = () => {
         </button>
 
         <a href="/" className="flex items-center space-x-2" aria-label="Homepage">
-          <img src="/src/assets/Logo.png" alt="Watchly Logo" className="w-10 h-10" />
+          <img src={logo} alt="Watchly Logo" className="w-10 h-10" />
           <h1 className="text-xl md:text-4xl font-bold text-white text-center">Watchly</h1>
         </a>
       </div>
