@@ -5,7 +5,7 @@ import { ArrowLeft, Star, Clock, Calendar } from "lucide-react";
 import MovieTrailer from "../components/movieThriller";
 import MoviePoster from "../components/moviePoster";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchMediaDetail } from "../App/features/movies/movieDetailSlice";
+import { fetchMediaDetail } from "../app/features/movies/movieDetailSlice";
 import {
   addToWatchlist,
   removeMovie,
