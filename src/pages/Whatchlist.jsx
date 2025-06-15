@@ -2,6 +2,7 @@ import React from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
 import { removeMovie, removeTvSeries } from "../app/features/watchlist/watchlistSlice"; // Update this path
+import MovieCard from "../components/MovieCard";
 
 
 const Watchlist = () => {
@@ -45,23 +46,23 @@ const Watchlist = () => {
                   Movies ({movies.length})
                 </h3>
                 <div className="grid gap-6 grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
-                  {movies.map((item) => (
-                    <div key={item.id} className="group relative">
+                  {movies.map((movie) => (
+                    <div key={movie.id} className="group relative">
                       <Link
-                        to={`/media/${item.id}`}
+                        to={`/media/${movie.id}`}
                         className="block"
                       >
                         <img
-                          src={item.poster || item.image || "/fallback.jpg"}
-                          alt={item.title}
+                          src={movie.poster || movie.image || "/fallback.jpg"}
+                          alt={movie.title}
                           className="w-full h-auto rounded-lg object-cover group-hover:opacity-80 transition"
                         />
-                        <div className="mt-2 text-sm text-center">{item.title}</div>
+                        <div className="mt-2 text-sm text-center">{movie.title}</div>
                       </Link>
                       
                       {/* Remove Button */}
                       <button
-                        onClick={(e) => handleRemoveMovie(item.id, e)}
+                        onClick={(e) => handleRemoveMovie(movie.id, e)}
                         className="absolute top-2 right-2 bg-red-600 hover:bg-red-700 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition-opacity"
                         title="Remove from watchlist"
                       >
@@ -80,25 +81,25 @@ const Watchlist = () => {
                   TV Series ({tvSeries.length})
                 </h3>
                 <div className="grid gap-6 grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
-                  {tvSeries.map((item) => (
-                    <div key={item.id} className="group relative">
+                  {tvSeries.map((Series) => (
+                    <div key={Series.id} className="group relative">
                       <Link
-                        to={`/media/${item.id}`}
+                        to={`/media/${Series.id}`}
                         className="block"
                       >
                         <img
-                          src={item.poster || item.image || "/fallback.jpg"}
-                          alt={item.name || item.title}
+                          src={Series.poster || Series.image || "/fallback.jpg"}
+                          alt={Series.name || Series.title}
                           className="w-full h-auto rounded-lg object-cover group-hover:opacity-80 transition"
                         />
                         <div className="mt-2 text-sm text-center">
-                          {item.name || item.title}
+                          {Series.name || Series.title}
                         </div>
                       </Link>
                       
                       {/* Remove Button */}
                       <button
-                        onClick={(e) => handleRemoveTvSeries(item.id, e)}
+                        onClick={(e) => handleRemoveTvSeries(Series.id, e)}
                         className="absolute top-2 right-2 bg-red-600 hover:bg-red-700 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition-opacity"
                         title="Remove from watchlist"
                       >

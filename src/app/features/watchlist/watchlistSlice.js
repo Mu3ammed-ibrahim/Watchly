@@ -1,52 +1,61 @@
 import { createSlice } from "@reduxjs/toolkit";
 
+// Load watchlist from localStorage on app start
+const loadFromLocalStorage = () => {
+  try {
+    const data = localStorage.getItem("watchlist");
+    return data ? JSON.parse(data) : { movies: [], tvSeries: [] };
+  } catch (e) {
+    console.error("Failed to load watchlist from localStorage:", e);
+    return { movies: [], tvSeries: [] };
+  }
+};
+
+// Save to localStorage whenever state changes
+const saveToLocalStorage = (state) => {
+  try {
+    localStorage.setItem("watchlist", JSON.stringify(state));
+  } catch (e) {
+    console.error("Failed to save watchlist to localStorage:", e);
+  }
+};
+
 const watchlistSlice = createSlice({
   name: "watchlist",
-  initialState: {
-    movies: [],
-    tvSeries: [],
-  },
+  initialState: loadFromLocalStorage(), // initialize from localStorage
   reducers: {
-    // Add to watchlist (auto-detects movie vs TV series)
     addToWatchlist: (state, action) => {
       const { type, ...item } = action.payload;
       const isMovie = type === "movie";
       const isTvSeries = type === "tv";
 
       if (isMovie) {
-        const exists = state.movies.find((movie) => movie.id === item.id);
-        if (!exists) {
-          state.movies.push(item); // only the item data
-        }
+        const exists = state.movies.some((movie) => movie.id === item.id);
+        if (!exists) state.movies.push(item);
       } else if (isTvSeries) {
-        const exists = state.tvSeries.find((series) => series.id === item.id);
-        if (!exists) {
-          state.tvSeries.push(item); // only the item data
-        }
+        const exists = state.tvSeries.some((series) => series.id === item.id);
+        if (!exists) state.tvSeries.push(item);
       }
+
+      saveToLocalStorage(state);
     },
 
-    // Remove movie from watchlist
     removeMovie: (state, action) => {
-      const movieId = action.payload;
-      state.movies = state.movies.filter((movie) => movie.id !== movieId);
+      state.movies = state.movies.filter((movie) => movie.id !== action.payload);
+      saveToLocalStorage(state);
     },
 
-    // Remove TV series from watchlist
     removeTvSeries: (state, action) => {
-      const seriesId = action.payload;
-      state.tvSeries = state.tvSeries.filter(
-        (series) => series.id !== seriesId
-      );
+      state.tvSeries = state.tvSeries.filter((series) => series.id !== action.payload);
+      saveToLocalStorage(state);
     },
   },
 });
 
 // Export actions
-export const { addToWatchlist, removeMovie, removeTvSeries } =
-  watchlistSlice.actions;
+export const { addToWatchlist, removeMovie, removeTvSeries } = watchlistSlice.actions;
 
-// Basic selectors
+// Selectors
 export const selectMovies = (state) => state.watchlist.movies;
 export const selectTvSeries = (state) => state.watchlist.tvSeries;
 
