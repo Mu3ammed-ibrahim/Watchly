@@ -158,8 +158,8 @@ const Navbar = () => {
         </button>
 
         <a href="/" className="flex items-center space-x-2" aria-label="Homepage">
-          <Film size={24} className="text-[#e50914]" />
-          <h1 className="text-xl font-bold text-white">Watchly</h1>
+          <img src="/src/assets/Logo.png" alt="Watchly Logo" className="w-10 h-10" />
+          <h1 className="text-xl md:text-4xl font-bold text-white text-center">Watchly</h1>
         </a>
       </div>
 

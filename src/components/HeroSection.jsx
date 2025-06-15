@@ -5,8 +5,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { fetchPopularMovies } from "../app/features/movies/moviesSlice";
 import { Link } from "react-router-dom";
 
-const AUTO_PLAY_INTERVAL = 6000; // 6 seconds
-const AUTO_PLAY_PAUSE = 10000; // 10 seconds pause after manual interaction
+const AUTO_PLAY_INTERVAL = 6000;
+const AUTO_PLAY_PAUSE = 10000;
 
 const Hero = () => {
   const dispatch = useDispatch();
@@ -22,7 +22,6 @@ const Hero = () => {
     }
   }, [dispatch, popular.length]);
 
-  // Clear timers on unmount
   useEffect(() => {
     return () => {
       clearInterval(autoPlayRef.current);
@@ -30,28 +29,23 @@ const Hero = () => {
     };
   }, []);
 
-  // Auto play logic
   useEffect(() => {
     if (popular.length === 0) return;
-
     if (!isPausedRef.current) {
       autoPlayRef.current = setInterval(() => {
         setCurrent((prev) => (prev + 1) % popular.length);
       }, AUTO_PLAY_INTERVAL);
     }
-
     return () => clearInterval(autoPlayRef.current);
   }, [popular.length, current]);
 
-  // Pause auto play on manual slide and resume after pause timeout
   const pauseAutoPlay = () => {
     isPausedRef.current = true;
     clearInterval(autoPlayRef.current);
     clearTimeout(pauseTimeoutRef.current);
-
     pauseTimeoutRef.current = setTimeout(() => {
       isPausedRef.current = false;
-      setCurrent((prev) => prev); // trigger effect to restart interval
+      setCurrent((prev) => prev); // trigger restart
     }, AUTO_PLAY_PAUSE);
   };
 
@@ -65,34 +59,22 @@ const Hero = () => {
     pauseAutoPlay();
   };
 
-  if (loading) {
+  if (loading || error || !popular.length) {
     return (
-      <div className="w-full h-[90vh] flex items-center justify-center bg-black text-white">
-        Loading popular movies...
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="w-full h-[90vh] flex items-center justify-center bg-black text-red-500">
-        Error: {error}
-      </div>
-    );
-  }
-
-  if (!popular.length) {
-    return (
-      <div className="w-full h-[90vh] flex items-center justify-center bg-black text-white">
-        No popular movies found.
-      </div>
+      <section className="w-full h-[90vh] flex items-center justify-center bg-black text-white">
+        {loading
+          ? "Loading popular movies..."
+          : error
+          ? `Error: ${error}`
+          : "No popular movies found."}
+      </section>
     );
   }
 
   const movie = popular[current];
 
   return (
-    <div className="relative w-full h-[90vh]  mt-10 bg-black overflow-hidden font-sans select-none">
+    <section className="relative w-full h-[90vh] mt-10 bg-black overflow-hidden font-sans select-none">
       {/* Arrows */}
       <button
         className="absolute top-1/2 left-4 z-30 bg-black/40 hover:bg-black/60 text-white p-2 rounded-full -translate-y-1/2 transition-colors"
@@ -101,7 +83,6 @@ const Hero = () => {
       >
         <ChevronLeft size={24} />
       </button>
-
       <button
         className="absolute top-1/2 right-4 z-30 bg-black/40 hover:bg-black/60 text-white p-2 rounded-full -translate-y-1/2 transition-colors"
         onClick={nextSlide}
@@ -110,9 +91,8 @@ const Hero = () => {
         <ChevronRight size={24} />
       </button>
 
-      {/* Slide */}
       <AnimatePresence mode="wait">
-        <motion.div
+        <motion.figure
           key={movie.id}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -137,9 +117,9 @@ const Hero = () => {
             />
 
             {/* Content */}
-            <div className="absolute inset-0 flex items-end z-20">
+            <figcaption className="absolute inset-0 flex items-end z-20">
               <div className="container mx-auto px-4 md:px-8 pb-16 md:pb-24">
-                <motion.div
+                <motion.header
                   initial={{ opacity: 0, y: 30 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5, delay: 0.2 }}
@@ -175,7 +155,7 @@ const Hero = () => {
                     {movie.overview}
                   </p>
 
-                  <div className="flex flex-wrap gap-4">
+                  <nav className="flex flex-wrap gap-4">
                     <motion.button
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
@@ -193,14 +173,14 @@ const Hero = () => {
                       <Plus size={20} className="mr-2" />
                       Add to My List
                     </motion.button>
-                  </div>
-                </motion.div>
+                  </nav>
+                </motion.header>
               </div>
-            </div>
+            </figcaption>
           </Link>
-        </motion.div>
+        </motion.figure>
       </AnimatePresence>
-    </div>
+    </section>
   );
 };
 

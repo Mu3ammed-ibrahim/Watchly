@@ -42,7 +42,11 @@ const SearchedMovies = () => {
     return (
       <main className="min-h-screen bg-[#141414] text-white pt-20">
         <section className="container mx-auto px-4 py-8 text-center">
-          <Search size={64} className="mx-auto mb-4 text-gray-500" aria-hidden="true" />
+          <Search
+            size={64}
+            className="mx-auto mb-4 text-gray-500"
+            aria-hidden="true"
+          />
           <h1 className="text-2xl font-bold mb-2">No search query provided</h1>
           <p className="text-gray-400 mb-6">
             Please enter a search term to find movies.
@@ -62,7 +66,11 @@ const SearchedMovies = () => {
     return (
       <main className="min-h-screen bg-[#141414] text-white pt-20">
         <section className="container mx-auto px-4 py-8 text-center">
-          <Search size={64} className="mx-auto mb-4 text-gray-500" aria-hidden="true" />
+          <Search
+            size={64}
+            className="mx-auto mb-4 text-gray-500"
+            aria-hidden="true"
+          />
           <h1 className="text-2xl font-bold mb-2">Search term too short</h1>
           <p className="text-gray-400 mb-6">
             Please enter at least 3 characters to search for movies.
@@ -82,21 +90,14 @@ const SearchedMovies = () => {
     <main className="min-h-screen bg-[#141414] text-white pt-20">
       <section className="container mx-auto px-4 py-8">
         <header className="flex items-center mb-8">
-          <button
-            onClick={() => navigate(-1)}
-            className="flex items-center text-gray-400 hover:text-white transition-colors mr-4"
-            aria-label="Go back"
-          >
-            <ArrowLeft size={20} className="mr-2" aria-hidden="true" />
-            Back
-          </button>
           <div>
             <h1 className="text-3xl font-bold mb-2">
               Search Results for "{query}"
             </h1>
             {!searchLoading && (
               <p className="text-gray-400" aria-live="polite">
-                {searchResults.length} {searchResults.length === 1 ? "movie" : "movies"} found
+                {searchResults.length}{" "}
+                {searchResults.length === 1 ? "movie" : "movies"} found
               </p>
             )}
           </div>
@@ -109,7 +110,11 @@ const SearchedMovies = () => {
             aria-live="assertive"
             aria-busy="true"
           >
-            <Loader2 size={40} className="animate-spin text-[#e50914]" aria-hidden="true" />
+            <Loader2
+              size={40}
+              className="animate-spin text-[#e50914]"
+              aria-hidden="true"
+            />
             <span className="ml-3 text-lg">Searching movies...</span>
           </section>
         )}
@@ -134,7 +139,11 @@ const SearchedMovies = () => {
         {/* No Results */}
         {!searchLoading && !error && searchResults.length === 0 && (
           <section className="text-center py-20">
-            <Search size={64} className="mx-auto mb-4 text-gray-500" aria-hidden="true" />
+            <Search
+              size={64}
+              className="mx-auto mb-4 text-gray-500"
+              aria-hidden="true"
+            />
             <h2 className="text-2xl font-bold mb-2">No movies found</h2>
             <p className="text-gray-400 mb-6">
               Try different keywords or check your spelling.
@@ -159,7 +168,10 @@ const SearchedMovies = () => {
                 transition={{ duration: 0.5 }}
               >
                 {currentMovies.map((movie, index) => (
-                  <article key={movie.id} aria-label={`Movie: ${movie.title || "Untitled"}`}>
+                  <article
+                    key={movie.id}
+                    aria-label={`Movie: ${movie.title || "Untitled"}`}
+                  >
                     <MovieCard movie={movie} index={index} />
                   </article>
                 ))}
@@ -196,7 +208,9 @@ const SearchedMovies = () => {
                             ? "bg-[#e50914] text-white"
                             : "bg-gray-800 text-white hover:bg-gray-700"
                         }`}
-                        aria-current={currentPage === pageNumber ? "page" : undefined}
+                        aria-current={
+                          currentPage === pageNumber ? "page" : undefined
+                        }
                       >
                         {pageNumber}
                       </button>
