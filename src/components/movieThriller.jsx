@@ -1,14 +1,13 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Play,
   X,
 } from "lucide-react";
 
-const MovieTrailer = ({ trailerUrl, title, thumbnail }) => {
+const MovieTrailer = ({ trailerUrl, title, thumbnail,isLoading,isModalOpen,setIsLoading,setIsModalOpen }) => {
   // State management for video player functionality
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+
 
   // Open trailer modal with smooth animation
   const openTrailer = () => {
@@ -162,7 +161,7 @@ const MovieTrailer = ({ trailerUrl, title, thumbnail }) => {
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.5, opacity: 0 }}
               transition={{ type: "spring", damping: 25, stiffness: 300 }}
-              className="relative w-full max-w-6xl aspect-video bg-black rounded-xl overflow-hidden shadow-2xl"
+              className="relative w-full max-w-6xl  aspect-video bg-black rounded-xl overflow-hidden shadow-2xl"
               onClick={(e) => e.stopPropagation()}
             >
               {/* Close Button */}
@@ -171,7 +170,7 @@ const MovieTrailer = ({ trailerUrl, title, thumbnail }) => {
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: 0.3 }}
                 onClick={closeTrailer}
-                className="absolute top-4 right-4 z-20 bg-black/70 hover:bg-black/90 p-3 rounded-full transition-all duration-200 backdrop-blur-sm"
+                className="absolute top-4 right-4 z-20 bg-black/70 hover:bg-zinc-500 p-3 rounded-full transition-all duration-200 backdrop-blur-sm"
               >
                 <X className="w-6 h-6 text-white" />
               </motion.button>

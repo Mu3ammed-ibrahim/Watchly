@@ -1,65 +1,93 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { useParams, useNavigate } from "react-router-dom";
-import {
-  ArrowLeft,
-  Play,
-  Plus,
-  ThumbsUp,
-  Share2,
-  Star,
-  Clock,
-  Calendar,
-} from "lucide-react";
+import { ArrowLeft, Star, Clock, Calendar } from "lucide-react";
 import MovieTrailer from "../components/movieThriller";
 import MoviePoster from "../components/moviePoster";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchMediaDetail } from "../App/features/movies/movieDetailSlice";
+import {
+  addToWatchlist,
+  removeMovie,
+  removeTvSeries,
+} from "../app/features/watchlist/watchlistSlice";
+import Actionbuttons from "../components/Actionbuttons";
 
 const MovieDetails = () => {
   const { id, media_type } = useParams();
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+
   // FIXED: Changed 'movie' to 'media' and 'movieDetail' to 'mediaDetail'
   const { media, loading, error } = useSelector((state) => state.mediaDetail);
 
-  const [isInWatchlist, setIsInWatchlist] = useState(false);
-  const [isLiked, setIsLiked] = useState(false);
+  // Get watchlist data from Redux store
+  const movies = useSelector((state) => state.watchlist.movies);
+  const tvSeries = useSelector((state) => state.watchlist.tvSeries);
+
+  // Calculate if current media is in watchlist based on Redux state
+  const isInWatchlist = media
+    ? movies.some((movie) => movie.id === media.id) ||
+      tvSeries.some((series) => series.id === media.id)
+    : false;
+
+  // Debug logging
+  useEffect(() => {
+    if (media) {
+      console.log("Current media ID:", media.id);
+      console.log("Current media title:", media.title);
+      console.log(
+        "Movies in watchlist:",
+        movies.map((m) => ({ id: m.id, title: m.title }))
+      );
+      console.log(
+        "TV series in watchlist:",
+        tvSeries.map((s) => ({ id: s.id, title: s.title || s.name }))
+      );
+      console.log("Is in watchlist:", isInWatchlist);
+    }
+  }, [media, movies, tvSeries, isInWatchlist]);
 
   // Fetch media details when component mounts or id/media_type changes
   useEffect(() => {
     if (id && media_type) {
       dispatch(fetchMediaDetail({ id, media_type }));
     }
-  }, [dispatch, id, media_type]); // Added dispatch to dependencies
+  }, [dispatch, id, media_type]);
 
   // Handle back navigation with smooth transition
   const handleBack = () => {
     navigate(-1);
   };
 
-  // Toggle watchlist status with visual feedback
+  const handleTrailer = () => {
+    setIsLoading(true);
+    setIsModalOpen(true);
+  };
+
+  // Toggle watchlist status - now properly synced with Redux
   const toggleWatchlist = () => {
-    setIsInWatchlist(!isInWatchlist);
-  };
-
-  // Toggle like status with visual feedback
-  const toggleLike = () => {
-    setIsLiked(!isLiked);
-  };
-
-  // Handle media sharing functionality
-  const handleShare = () => {
-    if (navigator.share && media) {
-      navigator.share({
-        title: media.title,
-        text: `Check out ${media.title} - ${media.description.substring(0, 100)}...`,
-        url: window.location.href,
-      });
+    if (isInWatchlist) {
+      // Remove from watchlist
+      if (media_type === "movie") {
+        dispatch(removeMovie(media.id));
+      } else {  
+        dispatch(removeTvSeries(media.id));
+      }
     } else {
-      navigator.clipboard.writeText(window.location.href);
-      alert("Link copied to clipboard!");
+      // Add to watchlist - include media_type for better detection
+      console.log("Media ID:", media.id); // Must not be undefined
+      console.log("Adding to watchlist", media);
+
+      dispatch(
+        addToWatchlist({
+          ...media,
+          type: media_type, // Use the media_type from URL params
+        })
+      );
     }
   };
 
@@ -227,62 +255,11 @@ const MovieDetails = () => {
             </div>
 
             {/* Action Buttons */}
-            <div className="flex flex-wrap gap-4">
-              {/* Play Button */}
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="bg-red-600 hover:bg-red-700 px-8 py-3 rounded-lg flex items-center gap-2 font-semibold transition-colors"
-              >
-                <Play className="w-5 h-5" />
-                Play Now
-              </motion.button>
-
-              {/* Watchlist Button */}
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={toggleWatchlist}
-                className={`px-6 py-3 rounded-lg flex items-center gap-2 font-semibold transition-all ${
-                  isInWatchlist
-                    ? "bg-green-600 hover:bg-green-700 text-white"
-                    : "bg-gray-700 hover:bg-gray-600 text-gray-300"
-                }`}
-              >
-                <Plus
-                  className={`w-5 h-5 transition-transform ${
-                    isInWatchlist ? "rotate-45" : ""
-                  }`}
-                />
-                {isInWatchlist ? "In Watchlist" : "Add to Watchlist"}
-              </motion.button>
-
-              {/* Like Button */}
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={toggleLike}
-                className={`p-3 rounded-lg transition-all ${
-                  isLiked
-                    ? "bg-blue-600 hover:bg-blue-700 text-white"
-                    : "bg-gray-700 hover:bg-gray-600 text-gray-300"
-                }`}
-              >
-                <ThumbsUp
-                  className={`w-5 h-5 ${isLiked ? "fill-current" : ""}`}
-                />
-              </motion.button>
-
-              {/* Share Button */}
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={handleShare}
-                className="bg-gray-700 hover:bg-gray-600 p-3 rounded-lg text-gray-300 transition-colors"
-              >
-                <Share2 className="w-5 h-5" />
-              </motion.button>
-            </div>
+            <Actionbuttons
+              isInWatchlist={isInWatchlist}
+              toggleWatchlist={toggleWatchlist}
+              handleTrailer={handleTrailer}
+            />
           </motion.div>
         </div>
 
@@ -294,7 +271,11 @@ const MovieDetails = () => {
           className="mt-12"
         >
           <MovieTrailer
+            isModalOpen={isModalOpen}
+            setIsModalOpen={setIsModalOpen}
+            isLoading={isLoading}
             trailerUrl={media.trailer}
+            setIsLoading={setIsLoading}
             title={media.title}
             thumbnail={media.backdrop || media.poster}
           />
