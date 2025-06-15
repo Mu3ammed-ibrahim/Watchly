@@ -32,7 +32,7 @@ const Watchlist = () => {
             <p className="text-gray-400 text-lg mb-4">Your watchlist is empty.</p>
             <Link 
               to="/" 
-              className="text-blue-400 hover:text-blue-300 underline"
+              className="text-white hover:text-red-600 font-semibold"
             >
               Browse movies and TV shows
             </Link>
@@ -49,7 +49,7 @@ const Watchlist = () => {
                   {movies.map((movie) => (
                     <div key={movie.id} className="group relative">
                       <Link
-                        to={`/media/${movie.id}`}
+                        to={`/movie/${movie.id}`}
                         className="block"
                       >
                         <img
@@ -84,7 +84,7 @@ const Watchlist = () => {
                   {tvSeries.map((Series) => (
                     <div key={Series.id} className="group relative">
                       <Link
-                        to={`/media/${Series.id}`}
+                        to={`/tv/${Series.id}`}
                         className="block"
                       >
                         <img

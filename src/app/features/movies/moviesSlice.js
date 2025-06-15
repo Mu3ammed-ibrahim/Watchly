@@ -12,7 +12,7 @@ export const fetchPopularMovies = createAsyncThunk(
       const res = await axios.get(
         `https://api.themoviedb.org/3/movie/popular?api_key=${TMDB_API_KEY}&language=en-US&page=1`
       );
-      return res.data.results.map(movie => ({
+      return res.data.results.map((movie) => ({
         ...movie,
         media_type: "movie",
       }));
@@ -30,7 +30,7 @@ export const fetchTopRatedMovies = createAsyncThunk(
       const res = await axios.get(
         `https://api.themoviedb.org/3/movie/top_rated?api_key=${TMDB_API_KEY}&language=en-US&page=1`
       );
-      return res.data.results.map(movie => ({
+      return res.data.results.map((movie) => ({
         ...movie,
         media_type: "movie",
       }));
@@ -48,7 +48,7 @@ export const fetchTvSeries = createAsyncThunk(
       const res = await axios.get(
         `https://api.themoviedb.org/3/discover/tv?sort_by=vote_average.desc&vote_count.gte=100&without_genres=10763,10764,10767&api_key=${TMDB_API_KEY}&language=en-US&page=1`
       );
-      return res.data.results.map(tv => ({
+      return res.data.results.map((tv) => ({
         ...tv,
         media_type: "tv",
       }));
@@ -64,14 +64,17 @@ export const fetchSearchMovies = createAsyncThunk(
   async (searchTerm, thunkAPI) => {
     try {
       const res = await axios.get(
-        `https://api.themoviedb.org/3/search/movie?api_key=${TMDB_API_KEY}&language=en-US&query=${searchTerm}&page=1&include_adult=false`
+        `https://api.themoviedb.org/3/search/multi?api_key=${TMDB_API_KEY}&language=en-US&query=${searchTerm}&page=1&include_adult=false`
       );
-      return res.data.results.map(movie => ({
-        ...movie,
-        media_type: "movie",
-      }));
+
+      // Filter out "person" results (actors/actresses)
+      const filteredResults = res.data.results.filter(
+        (item) => item.media_type === "movie" || item.media_type === "tv"
+      );
+
+      return filteredResults;
     } catch (err) {
-      return thunkAPI.rejectWithValue(err.response.data);
+      return thunkAPI.rejectWithValue(err.response?.data || err.message);
     }
   }
 );
@@ -84,7 +87,7 @@ export const fetchTrendingMovies = createAsyncThunk(
       const res = await axios.get(
         `https://api.themoviedb.org/3/trending/movie/day?api_key=${TMDB_API_KEY}`
       );
-      return res.data.results.map(movie => ({
+      return res.data.results.map((movie) => ({
         ...movie,
         media_type: "movie",
       }));

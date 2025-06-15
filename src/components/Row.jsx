@@ -52,15 +52,18 @@ export default function Row({ title, movies, rowId }) {
   };
 
   return (
-    <motion.div
+    <motion.section
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
+      aria-labelledby={`row-title-${rowId}`}
     >
-      <div className="flex items-center justify-between mb-2 px-4">
+      {/* Section Header */}
+      <header className="flex items-center justify-between mb-2 px-4">
         <motion.h2
+          id={`row-title-${rowId}`}
           className="text-xl font-bold text-white"
           animate={{
             scale: isHovered ? 1.05 : 1,
@@ -71,48 +74,53 @@ export default function Row({ title, movies, rowId }) {
         >
           {title}
         </motion.h2>
-      </div>
+      </header>
 
       <div className="relative group">
-        {/* Left Arrow */}
-        <motion.div
-          className="absolute left-0 top-0 bottom-0 z-10 flex items-center"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: isHovered && hasPrevious ? 1 : 0 }}
-          transition={{ duration: 0.3 }}
-        >
-          <motion.button
-            className="bg-black bg-opacity-50 h-full px-2 flex items-center justify-center"
-            onClick={() => handleScroll("left")}
-            whileHover={{ backgroundColor: "rgba(229, 9, 20, 0.5)" }}
-            whileTap={{ scale: 0.95 }}
-            disabled={!hasPrevious}
+        {/* Navigation Arrows */}
+        <nav aria-label="Scroll movie list">
+          {/* Left Arrow */}
+          <motion.div
+            className="absolute left-0 top-0 bottom-0 z-10 flex items-center"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: isHovered && hasPrevious ? 1 : 0 }}
+            transition={{ duration: 0.3 }}
           >
-            <ChevronLeft size={40} className="text-white" />
-          </motion.button>
-        </motion.div>
+            <motion.button
+              className="bg-black bg-opacity-50 h-full px-2 flex items-center justify-center"
+              onClick={() => handleScroll("left")}
+              whileHover={{ backgroundColor: "rgba(229, 9, 20, 0.5)" }}
+              whileTap={{ scale: 0.95 }}
+              disabled={!hasPrevious}
+              aria-label="Scroll left"
+            >
+              <ChevronLeft size={40} className="text-white" />
+            </motion.button>
+          </motion.div>
 
-        {/* Right Arrow */}
-        <motion.div
-          className="absolute right-0 top-0 bottom-0 z-10 flex items-center"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: isHovered && hasMore ? 1 : 0 }}
-          transition={{ duration: 0.3 }}
-        >
-          <motion.button
-            className="bg-black bg-opacity-50 h-full px-2 flex items-center justify-center"
-            onClick={() => handleScroll("right")}
-            whileHover={{ backgroundColor: "rgba(229, 9, 20, 0.5)" }}
-            whileTap={{ scale: 0.95 }}
-            disabled={!hasMore}
+          {/* Right Arrow */}
+          <motion.div
+            className="absolute right-0 top-0 bottom-0 z-10 flex items-center"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: isHovered && hasMore ? 1 : 0 }}
+            transition={{ duration: 0.3 }}
           >
-            <ChevronRight size={40} className="text-white" />
-          </motion.button>
-        </motion.div>
+            <motion.button
+              className="bg-black bg-opacity-50 h-full px-2 flex items-center justify-center"
+              onClick={() => handleScroll("right")}
+              whileHover={{ backgroundColor: "rgba(229, 9, 20, 0.5)" }}
+              whileTap={{ scale: 0.95 }}
+              disabled={!hasMore}
+              aria-label="Scroll right"
+            >
+              <ChevronRight size={40} className="text-white" />
+            </motion.button>
+          </motion.div>
+        </nav>
 
-        {/* Movies */}
-        <div
-          className="flex gap-2 overflow-x-hidden scrollbar-hide pl-4 py-4"
+        {/* Movie List */}
+        <ul
+          className="flex gap-2 overflow-x-auto lg:overflow-hidden scrollbar-hide pl-4 py-4"
           style={{
             scrollbarWidth: "none",
             msOverflowStyle: "none",
@@ -121,24 +129,27 @@ export default function Row({ title, movies, rowId }) {
           ref={rowRef}
           onScroll={handleContainerScroll}
           id={`row-${rowId}`}
+          aria-label={`${title} movie list`}
+          role="list"
         >
           {movies && movies.length > 0 ? (
             movies.map((movie, index) => (
-              <motion.div
+              <motion.li
                 key={movie.id || index}
-                className="flex-shrink-0"
+                className="flex-shrink-0 list-none"
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.5, delay: index * 0.05 }}
+                role="listitem"
               >
                 <MovieCard movie={movie} />
-              </motion.div>
+              </motion.li>
             ))
           ) : (
-            <div className="text-gray-400">No movies available</div>
+            <li className="text-gray-400">No movies available</li>
           )}
-        </div>
+        </ul>
       </div>
-    </motion.div>
+    </motion.section>
   );
 }

@@ -4,20 +4,17 @@ import {
   Users,
   Star,
   Globe,
-  Shield,
   Bookmark,
   PlayCircle,
 } from "lucide-react";
 
 export default function AboutPage() {
   return (
-    <div className="bg-black text-white min-h-screen">
+    <main className="bg-black text-white min-h-screen">
       {/* Hero Section */}
-      <div className="relative">
-        <img src="/src/assets/movies.jpg" alt="Hero" className="w-full " />
-        {/* Hero Background - Netflix style gradient overlay on image */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/70 to-black/20">
-        </div>
+      <header className="relative">
+        <img src="/src/assets/movies.jpg" alt="Hero" className="w-full" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/70 to-black/20"></div>
 
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 py-24 sm:py-32">
           <div className="max-w-3xl">
@@ -34,184 +31,162 @@ export default function AboutPage() {
             </button>
           </div>
         </div>
-      </div>
+      </header>
 
       {/* What is Watchly Section */}
-      <div className="bg-black py-16">
+      <section className="bg-black py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
           <div className="max-w-3xl mx-auto text-center mb-12">
             <h2 className="text-3xl font-bold mb-4">What is Watchly?</h2>
             <p className="text-gray-300 text-lg">
               Watchly is a comprehensive movie and TV show tracking platform
               designed for entertainment enthusiasts. Just like your favorite
-              streaming service, but smarter - Watchly helps you organize what
-              you watch, discover new content based on your preferences, and
-              connect with a community of like-minded viewers.
+              streaming service, but smarter.
             </p>
           </div>
 
-          {/* Features Grid - Netflix card style */}
+          {/* Features Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-16">
-            {/* Feature 1 */}
-            <div className="bg-zinc-900 p-6 rounded transition-transform hover:scale-105">
+            <article className="bg-zinc-900 p-6 rounded transition-transform hover:scale-105">
               <Film className="text-red-600 mb-4" size={36} />
               <h3 className="text-xl font-bold mb-2">Extensive Library</h3>
               <p className="text-gray-400">
-                Access information on thousands of movies and TV shows, from the
-                latest blockbusters to hidden gems and classics.
+                Access info on thousands of movies and TV shows.
               </p>
-            </div>
+            </article>
 
-            {/* Feature 2 */}
-            <div className="bg-zinc-900 p-6 rounded transition-transform hover:scale-105">
+            <article className="bg-zinc-900 p-6 rounded transition-transform hover:scale-105">
               <Bookmark className="text-red-600 mb-4" size={36} />
               <h3 className="text-xl font-bold mb-2">Personalized Watchlist</h3>
               <p className="text-gray-400">
-                Create and manage your watchlist with ease. Keep track of what
-                you've watched and what's next on your list.
+                Create and manage your watchlist easily.
               </p>
-            </div>
+            </article>
 
-            {/* Feature 3 */}
-            <div className="bg-zinc-900 p-6 rounded transition-transform hover:scale-105">
+            <article className="bg-zinc-900 p-6 rounded transition-transform hover:scale-105">
               <Star className="text-red-600 mb-4" size={36} />
               <h3 className="text-xl font-bold mb-2">Ratings & Reviews</h3>
               <p className="text-gray-400">
-                Rate and review what you watch, and see what others think. Build
-                a profile that reflects your taste in entertainment.
+                Rate and review, and see what others think.
               </p>
-            </div>
+            </article>
 
-            {/* Feature 4 */}
-            <div className="bg-zinc-900 p-6 rounded transition-transform hover:scale-105">
+            <article className="bg-zinc-900 p-6 rounded transition-transform hover:scale-105">
               <Tv className="text-red-600 mb-4" size={36} />
               <h3 className="text-xl font-bold mb-2">Seamless Streaming</h3>
               <p className="text-gray-400">
-                Instantly see which services are streaming your favorite
-                content, so you can start watching with just one click.
+                Quickly find which platform streams your content.
               </p>
-            </div>
+            </article>
 
-            {/* Feature 5 */}
-            <div className="bg-zinc-900 p-6 rounded transition-transform hover:scale-105">
+            <article className="bg-zinc-900 p-6 rounded transition-transform hover:scale-105">
               <Users className="text-red-600 mb-4" size={36} />
               <h3 className="text-xl font-bold mb-2">Community</h3>
               <p className="text-gray-400">
-                Connect with friends and follow users with similar tastes. Share
-                recommendations and discover new content together.
+                Connect with others and share recommendations.
               </p>
-            </div>
+            </article>
 
-            {/* Feature 6 */}
-            <div className="bg-zinc-900 p-6 rounded transition-transform hover:scale-105">
+            <article className="bg-zinc-900 p-6 rounded transition-transform hover:scale-105">
               <Globe className="text-red-600 mb-4" size={36} />
               <h3 className="text-xl font-bold mb-2">Cross-Platform</h3>
               <p className="text-gray-400">
-                Access Watchly on any device - desktop, tablet, or mobile. Your
-                watchlist stays synced everywhere you go.
+                Use Watchly on desktop, tablet, or mobile.
               </p>
-            </div>
+            </article>
           </div>
         </div>
-      </div>
+      </section>
 
-      {/* How It Works - Netflix style alternating panels */}
-      <div className="py-16">
+      {/* How It Works Section */}
+      <section className="py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
           <h2 className="text-3xl font-bold mb-16 text-center">
             How Watchly Works
           </h2>
 
           {/* Step 1 */}
-          <div className="flex flex-col md:flex-row items-center mb-24 gap-8">
+          <article className="flex flex-col md:flex-row items-center mb-24 gap-8">
             <div className="w-full md:w-1/2">
               <h3 className="text-2xl font-bold mb-4">Create Your Profile</h3>
               <p className="text-gray-300 mb-6">
-                Sign up for Watchly in seconds. Tell us what genres you love,
-                your favorite actors, directors, and more. We'll use this to
-                personalize your experience.
+                Sign up and personalize your Watchly account.
               </p>
               <ul className="space-y-2 text-gray-400">
                 <li className="flex items-start">
                   <span className="text-red-600 mr-2">•</span>
-                  Customize your profile with a photo and bio
+                  Customize with a photo and bio
                 </li>
                 <li className="flex items-start">
                   <span className="text-red-600 mr-2">•</span>
-                  Select your favorite genres and streaming services
+                  Select genres and platforms
                 </li>
                 <li className="flex items-start">
                   <span className="text-red-600 mr-2">•</span>
-                  Import your watch history from popular platforms
+                  Import watch history
                 </li>
               </ul>
             </div>
-            <div className="w-full md:w-1/2 bg-zinc-900 aspect-video rounded-lg flex items-center justify-center">
+            <figure className="w-full md:w-1/2 bg-zinc-900 aspect-video rounded-lg flex items-center justify-center">
               <Film size={72} className="text-red-600 opacity-50" />
-            </div>
-          </div>
+            </figure>
+          </article>
 
           {/* Step 2 */}
-          <div className="flex flex-col md:flex-row-reverse items-center mb-24 gap-8">
+          <article className="flex flex-col md:flex-row-reverse items-center mb-24 gap-8">
             <div className="w-full md:w-1/2">
               <h3 className="text-2xl font-bold mb-4">Discover New Content</h3>
               <p className="text-gray-300 mb-6">
-                Our smart recommendation engine learns from your ratings and
-                watching habits to suggest movies and shows you'll love. No more
-                endless scrolling trying to find something to watch.
+                Get personalized suggestions and explore curated collections.
               </p>
               <ul className="space-y-2 text-gray-400">
                 <li className="flex items-start">
                   <span className="text-red-600 mr-2">•</span>
-                  Personalized recommendations based on your taste
+                  Recommendations based on your taste
                 </li>
                 <li className="flex items-start">
                   <span className="text-red-600 mr-2">•</span>
-                  Curated collections from movie experts
+                  Curated collections
                 </li>
                 <li className="flex items-start">
                   <span className="text-red-600 mr-2">•</span>
-                  See what's trending in your favorite genres
+                  Trending content in your favorite genres
                 </li>
               </ul>
             </div>
-            <div className="w-full md:w-1/2 bg-zinc-900 aspect-video rounded-lg flex items-center justify-center">
+            <figure className="w-full md:w-1/2 bg-zinc-900 aspect-video rounded-lg flex items-center justify-center">
               <PlayCircle size={72} className="text-red-600 opacity-50" />
-            </div>
-          </div>
+            </figure>
+          </article>
 
           {/* Step 3 */}
-          <div className="flex flex-col md:flex-row items-center gap-8">
+          <article className="flex flex-col md:flex-row items-center gap-8">
             <div className="w-full md:w-1/2">
               <h3 className="text-2xl font-bold mb-4">Track & Share</h3>
               <p className="text-gray-300 mb-6">
-                Mark what you've watched, rate content, and leave reviews. Share
-                your thoughts with friends or keep them private. Your watchlist
-                becomes your personal entertainment journal.
+                Keep track of watched content and share reviews.
               </p>
               <ul className="space-y-2 text-gray-400">
                 <li className="flex items-start">
                   <span className="text-red-600 mr-2">•</span>
-                  Keep track of episodes you've watched 
+                  Track watched episodes
                 </li>
                 <li className="flex items-start">
                   <span className="text-red-600 mr-2">•</span>
-                  Get notifications for new episodes and releases
+                  Get notifications for new releases
                 </li>
                 <li className="flex items-start">
                   <span className="text-red-600 mr-2">•</span>
-                  Share your reviews on social media
+                  Share on social media
                 </li>
               </ul>
             </div>
-            <div className="w-full md:w-1/2 bg-zinc-900 aspect-video rounded-lg flex items-center justify-center">
+            <figure className="w-full md:w-1/2 bg-zinc-900 aspect-video rounded-lg flex items-center justify-center">
               <Bookmark size={72} className="text-red-600 opacity-50" />
-            </div>
-          </div>
+            </figure>
+          </article>
         </div>
-      </div>
-
-     
-    </div>
+      </section>
+    </main>
   );
 }
