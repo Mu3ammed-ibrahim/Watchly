@@ -52,28 +52,34 @@ export default function Row({ title, movies, rowId }) {
   };
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-    >
-      <div className="flex items-center justify-between mb-2 px-4">
-        <motion.h2
-          className="text-xl font-bold text-white"
-          animate={{
-            scale: isHovered ? 1.05 : 1,
-            x: isHovered ? 10 : 0,
-            color: isHovered ? "#E50914" : "#FFFFFF",
-          }}
-          transition={{ duration: 0.3 }}
-        >
-          {title}
-        </motion.h2>
-      </div>
+  <motion.section
+    initial={{ opacity: 0, y: 20 }}
+    animate={{ opacity: 1, y: 0 }}
+    transition={{ duration: 0.5 }}
+    onMouseEnter={() => setIsHovered(true)}
+    onMouseLeave={() => setIsHovered(false)}
+    aria-labelledby={`row-title-${rowId}`}
+    className="mb-6"
+  >
+    {/* Section Header */}
+    <header className="flex items-center justify-between mb-2 px-4">
+      <motion.h2
+        id={`row-title-${rowId}`}
+        className="text-xl font-bold text-white"
+        animate={{
+          scale: isHovered ? 1.05 : 1,
+          x: isHovered ? 10 : 0,
+          color: isHovered ? "#E50914" : "#FFFFFF",
+        }}
+        transition={{ duration: 0.3 }}
+      >
+        {title}
+      </motion.h2>
+    </header>
 
-      <div className="relative group">
+    <div className="relative group">
+      {/* Navigation Arrows */}
+      <nav aria-label="Scroll movie list">
         {/* Left Arrow */}
         <motion.div
           className="absolute left-0 top-0 bottom-0 z-10 flex items-center"
@@ -87,6 +93,7 @@ export default function Row({ title, movies, rowId }) {
             whileHover={{ backgroundColor: "rgba(229, 9, 20, 0.5)" }}
             whileTap={{ scale: 0.95 }}
             disabled={!hasPrevious}
+            aria-label="Scroll left"
           >
             <ChevronLeft size={40} className="text-white" />
           </motion.button>
@@ -105,40 +112,46 @@ export default function Row({ title, movies, rowId }) {
             whileHover={{ backgroundColor: "rgba(229, 9, 20, 0.5)" }}
             whileTap={{ scale: 0.95 }}
             disabled={!hasMore}
+            aria-label="Scroll right"
           >
             <ChevronRight size={40} className="text-white" />
           </motion.button>
         </motion.div>
+      </nav>
 
-        {/* Movies */}
-        <div
-          className="flex gap-2 overflow-x-hidden scrollbar-hide pl-4 py-4"
-          style={{
-            scrollbarWidth: "none",
-            msOverflowStyle: "none",
-            WebkitOverflowScrolling: "touch",
-          }}
-          ref={rowRef}
-          onScroll={handleContainerScroll}
-          id={`row-${rowId}`}
-        >
-          {movies && movies.length > 0 ? (
-            movies.map((movie, index) => (
-              <motion.div
-                key={movie.id || index}
-                className="flex-shrink-0"
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.5, delay: index * 0.05 }}
-              >
-                <MovieCard movie={movie} />
-              </motion.div>
-            ))
-          ) : (
-            <div className="text-gray-400">No movies available</div>
-          )}
-        </div>
-      </div>
-    </motion.div>
-  );
+      {/* Movie List */}
+      <ul
+        className="flex gap-2 overflow-x-auto lg:overflow-hidden scrollbar-hide pl-4 py-4"
+        style={{
+          scrollbarWidth: "none",
+          msOverflowStyle: "none",
+          WebkitOverflowScrolling: "touch",
+        }}
+        ref={rowRef}
+        onScroll={handleContainerScroll}
+        id={`row-${rowId}`}
+        aria-label={`${title} movie list`}
+        role="list"
+      >
+        {movies && movies.length > 0 ? (
+          movies.map((movie, index) => (
+            <motion.li
+              key={movie.id || index}
+              className="flex-shrink-0 list-none"
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.5, delay: index * 0.05 }}
+              role="listitem"
+            >
+              <MovieCard movie={movie} />
+            </motion.li>
+          ))
+        ) : (
+          <li className="text-gray-400">No movies available</li>
+        )}
+      </ul>
+    </div>
+  </motion.section>
+);
+
 }

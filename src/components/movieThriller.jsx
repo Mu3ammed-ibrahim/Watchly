@@ -1,14 +1,16 @@
 import React, { useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import {
-  Play,
-  X,
-} from "lucide-react";
+import { Play, X } from "lucide-react";
 
-const MovieTrailer = ({ trailerUrl, title, thumbnail,isLoading,isModalOpen,setIsLoading,setIsModalOpen }) => {
-  // State management for video player functionality
-
-
+const MovieTrailer = ({
+  trailerUrl,
+  title,
+  thumbnail,
+  isLoading,
+  isModalOpen,
+  setIsLoading,
+  setIsModalOpen,
+}) => {
   // Open trailer modal with smooth animation
   const openTrailer = () => {
     if (!trailerUrl) {
@@ -183,16 +185,17 @@ const MovieTrailer = ({ trailerUrl, title, thumbnail,isLoading,isModalOpen,setIs
                     <p className="text-white text-lg">Loading trailer...</p>
                   </div>
                 </div>
-              ) : (
-                <iframe
-                  src={`${trailerUrl}?autoplay=1&modestbranding=1&rel=0`}
-                  title={`${title} Trailer`}
-                  className="w-full h-full"
-                  frameBorder="0"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                  allowFullScreen
-                />
-              )}
+              ) : null}
+
+              <iframe
+                src={`${trailerUrl}?autoplay=1&modestbranding=1&rel=0`}
+                title={`${title} Trailer`}
+                className={`w-full h-full ${isLoading ? "hidden" : "block"}`}
+                frameBorder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allowFullScreen
+                onLoad={() => setIsLoading(false)} // ✅ This hides spinner once trailer is ready
+              />
             </motion.div>
           </motion.div>
         )}
