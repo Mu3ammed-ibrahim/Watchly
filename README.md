@@ -2,6 +2,10 @@
 
 **Watchly** is a sleek and modern web app built with React and Vite that allows users to discover trending movies and TV shows, view details, and manage their personal watchlist.
 
+## 🌐 Live Demo
+
+👉 [watchly-m.netlify.app](https://watchly-m.netlify.app)
+
 ## 📝 Description
 
 This project provides a responsive and dynamic user interface for exploring movies and series using a public API. Watchly includes features such as detailed media views, trailer previews, and a persistent watchlist powered by Redux Toolkit. Built with performance in mind using Vite and enhanced by Tailwind CSS and Framer Motion for smooth animations.
@@ -42,4 +46,3 @@ Currently, two official plugins are available:
 ## 📌 Expanding the ESLint Configuration
 
 If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
-
