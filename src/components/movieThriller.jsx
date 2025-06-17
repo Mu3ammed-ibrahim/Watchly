@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Play, X } from "lucide-react";
+import LoadingSpinner from "./LoadingSpinner";
 
 const MovieTrailer = ({
   trailerUrl,
@@ -68,7 +69,7 @@ const MovieTrailer = ({
   }
 
   return (
-    <div className="space-y-6">
+    <div className="p-8">
       {/* Section Header with Animation */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
@@ -167,25 +168,15 @@ const MovieTrailer = ({
               onClick={(e) => e.stopPropagation()}
             >
               {/* Close Button */}
-              <motion.button
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 0.3 }}
+              <button
                 onClick={closeTrailer}
                 className="absolute top-4 right-4 z-20 bg-black/70 hover:bg-zinc-500 p-3 rounded-full transition-all duration-200 backdrop-blur-sm"
               >
                 <X className="w-6 h-6 text-white" />
-              </motion.button>
+              </button>
 
               {/* Loading State with Spinner */}
-              {isLoading ? (
-                <div className="w-full h-full flex items-center justify-center bg-gray-900">
-                  <div className="text-center space-y-4">
-                    <div className="animate-spin rounded-full h-16 w-16 border-4 border-red-600 border-t-transparent mx-auto"></div>
-                    <p className="text-white text-lg">Loading trailer...</p>
-                  </div>
-                </div>
-              ) : null}
+              {isLoading ? <LoadingSpinner /> : null}
 
               <iframe
                 src={`${trailerUrl}?autoplay=1&modestbranding=1&rel=0`}
