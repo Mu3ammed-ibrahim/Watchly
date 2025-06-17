@@ -4,6 +4,7 @@ import { Play, Plus, ChevronLeft, ChevronRight } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchPopularMovies } from "../app/features/movies/moviesSlice";
 import { Link } from "react-router-dom";
+import LoadingSpinner from "./LoadingSpinner";
 
 const AUTO_PLAY_INTERVAL = 6000;
 const AUTO_PLAY_PAUSE = 10000;
@@ -63,7 +64,7 @@ const Hero = () => {
     return (
       <section className="w-full h-[90vh] flex items-center justify-center bg-black text-white">
         {loading
-          ? "Loading popular movies..."
+          ? <LoadingSpinner/>
           : error
           ? `Error: ${error}`
           : "No popular movies found."}
